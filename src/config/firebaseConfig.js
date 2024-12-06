@@ -1,6 +1,9 @@
 import { initializeApp } from "firebase/app";
+import { initializeFirestore } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
+import { initializeAuth } from 'firebase/auth'
 
-sconst firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyDBfeBPhQh0359_rnSqNvadbIlqSwomE6c",
   authDomain: "germsbuster-b7b66.firebaseapp.com",
   projectId: "germsbuster-b7b66",
@@ -10,5 +13,14 @@ sconst firebaseConfig = {
   measurementId: "G-19EKXDWPM5"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = initializeFirestore(app);
+const storage = getStorage(app);
+const auth = initializeAuth(app);
+
+export {
+  app,
+  db,
+  storage,
+  auth
+}
