@@ -7,7 +7,8 @@ export default {
         'inter': ['Inter', 'sans-serif']
       },
       colors: {
-        'primary': '#ffdd0f'
+        'primary': '#0cb632',
+        'secondary': '#ffdd0f'
       }
     },
   },

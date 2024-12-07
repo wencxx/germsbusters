@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { initializeFirestore } from 'firebase/firestore'
-import { getStorage } from 'firebase/storage'
-import { initializeAuth } from 'firebase/auth'
+import { initializeFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDBfeBPhQh0359_rnSqNvadbIlqSwomE6c",
@@ -14,13 +13,23 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = initializeFirestore(app);
-const storage = getStorage(app);
-const auth = initializeAuth(app);
+const auth = getAuth(app);
+
+const db = initializeFirestore(app, {
+  cacheSizeBytes: 1048576 
+});
+
+enableIndexedDbPersistence(db)
+  .catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.error("Persistence failed, multiple tabs open.");
+    } else if (err.code === 'unimplemented') {
+      console.error("Persistence is not available in this browser.");
+    }
+  });
 
 export {
   app,
   db,
-  storage,
   auth
-}
+};
