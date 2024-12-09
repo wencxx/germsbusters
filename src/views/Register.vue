@@ -86,7 +86,6 @@ const registrationData = ref({
     password: '',
     confirmPassword: '',
     role: 'employee',
-    isAccepted: 'employee',
     expertise: []
 })
 
@@ -156,7 +155,8 @@ const register = async () => {
         const addedUser =  await addDoc(userRef, {
             ...otherData,
             userID: user.uid,
-            primaryID:  response.data.secure_url
+            primaryID:  response.data.secure_url,
+            isAccepted: false
         }) 
 
         if(!addedUser.empty){

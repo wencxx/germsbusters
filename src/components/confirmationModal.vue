@@ -5,7 +5,7 @@
             <slot></slot>
             <div class="w-full flex justify-center gap-x-2">
                 <button class="w-1/3 bg-green-500 text-white py-1 rounded text-sm" @click="emit('closeModal')">No</button>
-                <button class="w-1/3 bg-red-500 text-white py-1 rounded text-sm" @click="emit('confirmDelete')">Yes</button>
+                <button class="w-1/3 bg-red-500 text-white py-1 rounded text-sm" @click="emit('confirmAccept')">Yes</button>
             </div>
         </div>
     </div>
@@ -17,5 +17,5 @@ const { type } = defineProps({
     type: String
 })
 
-const emit = defineEmits(['closeModal', 'confirmDelete'])
+const emit = defineEmits(['closeModal', 'confirmAccept'])
 </script>

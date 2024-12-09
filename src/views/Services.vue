@@ -1,6 +1,6 @@
 <template>
-    <div class="flex items-center justify-center">
-        <div class="bg-white w-full max-w-6xl h-96 rounded-md border p-10 space-y-3">
+    <div class="flex justify-center">
+        <div class="bg-white w-full max-w-6xl h-96 rounded-md border p-10 space-y-3 mt-14">
             <div class="flex justify-between">
                 <h1 class="text-gray-500 font-semibold tracking-wide text-lg">Services</h1>
                 <div class="flex gap-x-2">
@@ -8,7 +8,6 @@
                     <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm" @click="openAddModal = true">Add Service</button>
                 </div>
             </div>
-            {{ searchFilter }}
             <table class="w-full">
                 <thead>
                     <tr class="border-y text-gray-600">
@@ -18,8 +17,8 @@
                         <th class="py-2 w-1/5">Action</th>
                     </tr>
                 </thead>
-                <tbody v-if="!fetching && filteredServices().length">
-                    <tr v-for="(service, index) in filteredServices()" :key="index" class="border-y text-center text-gray-600" :class="{ 'animate-pulse bg-gray-100': deleting && indexToDelete === index }">
+                <tbody v-if="!fetching && filteredServices.length">
+                    <tr v-for="(service, index) in filteredServices" :key="index" class="border-y text-center text-gray-600" :class="{ 'animate-pulse bg-gray-100': deleting && indexToDelete === index }">
                         <td class="py-2 capitalize">{{ service.title }}</td>
                         <td class="py-2">{{ service.description }}</td>
                         <td class="py-2">₱{{ service.rate }}</td>
@@ -36,7 +35,7 @@
                     </tr>
                 </tbody>
                 <!-- no data -->
-                <tbody v-else-if="!fetching && !filteredServices().length">
+                <tbody v-else-if="!fetching && !filteredServices.length">
                     <tr class="border-y text-center text-gray-600">
                         <td colspan="4" class="py-2">No services available</td>
                     </tr>
@@ -69,12 +68,14 @@
         <!-- edit service component -->
         <editService v-if="openEditModal" @closeModal="openEditModal = false" :service="serviceToEdit" @updated="updated" />
         <!-- delete modal -->
-        <deleteModal v-if="openDeleteModal" type="Service" @closeModal="openDeleteModal = false" @confirmDelete="confirmedDelete" />
+        <deleteModal v-if="openDeleteModal" type="Service" @closeModal="openDeleteModal = false" @confirmDelete="confirmedDelete">
+            <h1 class="text-center text-xl font-semibold text-gray-600 uppercase w-3/4">Are you sure you want to delete this service</h1>
+        </deleteModal>
     </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { db } from '../config/firebaseConfig'
 import {collection, getDocs, doc, deleteDoc } from 'firebase/firestore'
 import { useToast } from 'vue-toast-notification'
@@ -118,17 +119,21 @@ const getServices = async () => {
 const searchFilter = ref('')
 const limitPerPage = ref(10)
 
-const filteredServices = () => {
-    if(!searchFilter.value) return services.value
+const filteredServices = computed(() => {
+    if (!searchFilter.value) return services.value
 
-    const filteredServices = services.value.filter(service =>
-        service.title.toLowerCase().includes(searchFilter.value.toLowerCase()) ||
-        service.description.toLowerCase().includes(searchFilter.value.toLowerCase()) || 
-        service.rate.toLowerCase().includes(searchFilter.value.toLowerCase())
-    )
+    return services.value.filter(service => {
+        const rate = service.rate?.toString().toLowerCase() || ''
+        const searchTerm = searchFilter.value.toLowerCase()
 
-    return filteredServices
-}
+        return (
+            service.title.toLowerCase().includes(searchTerm) ||
+            service.description.toLowerCase().includes(searchTerm) ||
+            rate.includes(searchTerm)
+        )
+    }).splice(0, limitPerPage.value - 1)
+})
+
 
 // add service
 const openAddModal = ref(false)
@@ -150,14 +155,14 @@ const updateService = (service) => {
 }
 
 const updated = (data) => {
-    const editedService = services.value.find(service => service.id === data.id);
+    const editedService = services.value.find(service => service.id === data.id)
 
     if (editedService) {
-        Object.assign(editedService, data);
+        Object.assign(editedService, data)
     }
 
-    openEditModal.value = false;
-};
+    openEditModal.value = false
+}
 
 
 // delete service

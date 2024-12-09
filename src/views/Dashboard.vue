@@ -1,6 +1,12 @@
 <template>
-    <div>
-        this is dashboard
+    <div class="flex justify-center !p-10">
+        <div class="w-full">
+            <div class="grid grid-cols-4 border w-full h-32">
+                <div>
+
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 

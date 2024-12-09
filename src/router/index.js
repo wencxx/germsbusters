@@ -24,6 +24,15 @@ const routes = [
         }
     },
     {
+        path: '/pending-employees',
+        name: 'pendingEmployees',
+        component: () => import('../views/PendingEmployees.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresRole: 'admin',
+        }
+    },
+    {
         path: '/services',
         name: 'services',
         component: () => import('../views/Services.vue'),

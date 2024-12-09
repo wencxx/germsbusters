@@ -12,6 +12,12 @@
         <nav>
             <ul class="space-y-1">
                 <li>
+                    <router-link :to="{ name: 'dashboard' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-200">
+                        <Icon icon="uil:chart" class="text-2xl" />
+                        <span class="text-lg">Dashboard</span>
+                    </router-link>
+                </li>
+                <li>
                     <div class="flex items-center gap-x-3 w-full p-2 rounded-md cursor-pointer hover:bg-gray-200" @click="openMenu('Employee')">
                         <Icon icon="mdi:user-group-outline" class="text-2xl" />
                         <span class="text-lg">Employee</span>
@@ -21,7 +27,7 @@
                         <router-link class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
                             <span class="text-lg">Accepted Employee</span>
                         </router-link>
-                        <router-link class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
+                        <router-link :to="{ name: 'pendingEmployees' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
                             <span class="text-lg">Pending Employee</span>
                         </router-link>
                     </div>

@@ -5,6 +5,7 @@
             <h1 class="text-2xl font-medium">Welcome Back</h1>
             <div class="w-full space-y-3 mt-7">
                 <p v-if="$route.query.registered" class="bg-green-500 text-white pl-2 rounded py-1">Successfully Registered!</p>
+                <p v-if="notAccepted" class="bg-green-500 text-white pl-2 rounded py-1">Wait for the admin to accept your registration</p>
                 <div class="flex flex-col gap-y-1 w-full">
                     <label for="Username">Username</label>
                     <input type="text" class="bg-transparent border h-9 rounded pl-2" v-model="userCredentials.username">
@@ -44,10 +45,12 @@ const userCredentials = ref({
 const userRef = collection(db, 'users')
 
 const signingIn = ref(false)
+const notAccepted = ref(false)
 
 const signIn = async () => {
     try {
         signingIn.value = true
+        notAccepted.value = false
         const userCredential = await signInWithEmailAndPassword(auth, `${userCredentials.value.username}@gmail.com`, userCredentials.value.password)
 
         const user = userCredential.user
@@ -58,6 +61,14 @@ const signIn = async () => {
         )
 
         const snapshots = await getDocs(q)
+
+        if(!snapshots.docs[0].data().isAccepted) {
+            notAccepted.value = true
+            router.push({
+                query: ''
+            })
+            return
+        }
 
         if(snapshots.docs[0].data().role === 'admin'){
             router.push('/dashboard')
