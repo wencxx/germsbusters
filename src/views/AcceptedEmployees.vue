@@ -2,7 +2,7 @@
     <div class="flex justify-center">
         <div class="bg-white w-full max-w-6xl h-96 rounded-md border p-10 space-y-3 mt-14">
             <div class="flex justify-between">
-                <h1 class="text-gray-500 font-semibold tracking-wide text-lg">Pending Employees</h1>
+                <h1 class="text-gray-500 font-semibold tracking-wide text-lg">Employees</h1>
                 <div class="flex gap-x-2">
                     <select v-model="limitPerPage" class="border rounded px-2">
                         <option value="5">5 rows</option>
@@ -42,9 +42,6 @@
                             <div class="text-lg space-x-1">
                                 <button>
                                     <Icon icon="mdi:image" @click="viewPrimaryID(employee.primaryID)" class="text-gray-500" />
-                                </button>
-                                <button>
-                                    <Icon icon="mdi:check" @click="acceptEmployee(employee.id, index)" class="text-green-500" />
                                 </button>
                                 <button>
                                     <Icon icon="mdi:trash" class="text-red-500" @click="deleteEmployee(employee.id, index)" />
@@ -119,22 +116,22 @@ import deleteModal from '../components/deleteModal.vue'
 import viewImage from '../components/viewImage.vue'
 
 onMounted(() => {
-    getPendingEmployee()
+    getEmployee()
 })
 
 const $toast = useToast()
 
 // get pending employees
-const pendingEmployees = ref([])
+const employees = ref([])
 const fetching = ref(false)
 
-const getPendingEmployee = async () => {
+const getEmployee = async () => {
     try {
         fetching.value = true
         const q = query(
             collection(db, 'users'),
             and(
-                where('isAccepted', '==', false),
+                where('isAccepted', '==', true),
                 where('role', '==', 'employee'),
             )
         )
@@ -142,7 +139,7 @@ const getPendingEmployee = async () => {
         const snapshots = await getDocs(q)
 
         snapshots.docs.forEach(doc => {
-            pendingEmployees.value.push({
+            employees.value.push({
                 id: doc.id,
                 ...doc.data()
             })
@@ -159,9 +156,9 @@ const searchFilter = ref('')
 const limitPerPage = ref(5)    
 
 const filteredEmployee = computed(() => {
-    if (!searchFilter.value) return pendingEmployees.value
+    if (!searchFilter.value) return employees.value
 
-    return pendingEmployees.value.filter(employee => {
+    return employees.value.filter(employee => {
         const searchTerm = searchFilter.value.toLowerCase()
 
         return (
@@ -171,35 +168,6 @@ const filteredEmployee = computed(() => {
         )
     }).splice(0, limitPerPage.value - 1)
 })
-
-// accept employee
-const employeeIDToAccept = ref('')
-const employeeIndexToAccept = ref('')
-const showConfirmationModal = ref(false)
-
-const acceptEmployee = (employeeID, index) => {
-    employeeIDToAccept.value = employeeID
-    employeeIndexToAccept.value = index
-
-    showConfirmationModal.value = true
-}
-
-const confirmAccept = async () => {
-    try {
-        showConfirmationModal.value = false
-        const docRef = doc(db, 'users', employeeIDToAccept.value)
-
-        await updateDoc(docRef, {
-            isAccepted: true
-        })
-
-        pendingEmployees.value.splice(employeeIndexToAccept.value, 1)
-        $toast.success('Employee accepted successfully.')
-    } catch (error) {
-        console.log(error)
-        $toast.error('Failed to accept employee.')
-    }
-}
 
 // delete employee
 const employeeIDToDelete = ref('')
@@ -223,7 +191,7 @@ const confirmDelete = async () => {
 
         await deleteDoc(docRef)
 
-        pendingEmployees.value.splice(employeeIndexToDelete.value, 1)
+        employees.value.splice(employeeIndexToDelete.value, 1)
         $toast.success('Employee declined successfully')
     } catch (error) {
         $toast.error('Failed to delete employee')

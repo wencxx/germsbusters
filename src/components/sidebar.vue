@@ -24,11 +24,11 @@
                         <Icon icon="weui:arrow-filled" class="text-2xl ml-auto rotate-90 duration-150" :class="{ 'rotate-180': openedMenu.includes('Employee') }" />
                     </div>
                     <div v-if="openedMenu.includes('Employee')" class="ml-5 pl-2 border-l space-y-1">
-                        <router-link class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
-                            <span class="text-lg">Accepted Employee</span>
+                        <router-link :to="{ name: 'employees' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
+                            <span class="text-lg">Employees</span>
                         </router-link>
                         <router-link :to="{ name: 'pendingEmployees' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
-                            <span class="text-lg">Pending Employee</span>
+                            <span class="text-lg">Pending Employees</span>
                         </router-link>
                     </div>
                 </li>
