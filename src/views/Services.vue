@@ -1,6 +1,6 @@
 <template>
     <div class="flex justify-center">
-        <div class="bg-white w-full max-w-6xl h-96 rounded-md border p-10 space-y-3 mt-14">
+        <div class="bg-white w-full max-w-6xl h-fit min-h-96 rounded-md border p-10 space-y-3 mt-14">
             <div class="flex justify-between">
                 <h1 class="text-gray-500 font-semibold tracking-wide text-lg">Services</h1>
                 <div class="flex gap-x-2">
@@ -78,6 +78,7 @@
 import { onMounted, ref, computed } from 'vue'
 import { db } from '../config/firebaseConfig'
 import {collection, getDocs, doc, deleteDoc } from 'firebase/firestore'
+import { useDataStore } from '../store'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 
@@ -86,34 +87,12 @@ import addService from '../components/addService.vue'
 import editService from '../components/editService.vue'
 import deleteModal from '../components/deleteModal.vue'
 
-onMounted(() => {
-    getServices()
-})
-
+const dataStore = useDataStore()
 const $toast = useToast()
 
 // get services
-const servicesCollection = collection(db, 'services')
-const fetching = ref(false)
-const services = ref([])
-
-const getServices = async () => {
-    fetching.value = true 
-    try {
-        const snapshots = await getDocs(servicesCollection)
-
-        snapshots.docs.forEach(doc => {
-            services.value.push({
-                id: doc.id,
-                ...doc.data()
-            })
-        })
-    } catch (error) {
-        console.log(error)
-    } finally {
-        fetching.value = false
-    }
-}
+const fetching = computed(() => dataStore.fetchingServices)
+const services = computed(() => dataStore.services)
 
 // filter services 
 const searchFilter = ref('')

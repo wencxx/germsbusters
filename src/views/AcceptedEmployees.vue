@@ -36,7 +36,7 @@
                             </div>
                         </td>
                         <td class="py-2">
-                            <p class="bg-orange-500 text-white rounded text-sm py-1 w-1/2 mx-auto">Pending</p>
+                            <p class="bg-orange-500 text-white rounded text-sm py-1 w-1/2 mx-auto capitalize" :class="{ '!bg-green-500': employee.status === 'available' }">{{ employee.status }}</p>
                         </td>
                         <td class="py-2">
                             <div class="text-lg space-x-1">

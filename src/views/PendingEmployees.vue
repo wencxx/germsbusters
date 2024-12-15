@@ -21,7 +21,6 @@
                         <th class="py-2 w-2/12">Birthday</th>
                         <th class="py-2 w-2/12">Gender</th>
                         <th class="py-2 w-3/12">Expertise</th>
-                        <th class="py-2 w-2/12">Status</th>
                         <th class="py-2 w-1/12">Action</th>
                     </tr>
                 </thead>
@@ -34,9 +33,6 @@
                             <div class="flex w-full gap-1 flex-wrap">
                                 <p v-for="expertise in employee.expertise" :key="expertise" class="text-sm bg-blue-500 text-white px-1 rounded text-start">{{ expertise }}</p>
                             </div>
-                        </td>
-                        <td class="py-2">
-                            <p class="bg-orange-500 text-white rounded text-sm py-1 w-1/2 mx-auto">Pending</p>
                         </td>
                         <td class="py-2">
                             <div class="text-lg space-x-1">

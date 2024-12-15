@@ -10,7 +10,7 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { useAuthStore } from './store'
+import { useAuthStore, useDataStore } from './store'
 import { auth } from './config/firebaseConfig'
 import { onAuthStateChanged } from 'firebase/auth'
 
@@ -21,6 +21,7 @@ import headerComponent from './components/header.vue'
 const showSidebar = ref(true)
 
 const authStore = useAuthStore()
+const dataStore = useDataStore()
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 
@@ -28,6 +29,9 @@ onMounted(() => {
   onAuthStateChanged(auth, (currentUser) => {
     if (currentUser) {
       authStore.currentUser = currentUser
+      dataStore.getReservations()
+      dataStore.getServices()
+      dataStore.getAvailalableEmployees()
     } else {
       authStore.logout()
     }

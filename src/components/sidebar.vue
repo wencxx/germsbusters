@@ -9,7 +9,7 @@
                 <p class="text-sm font-semibold text-gray-700 -mt-1">{{ currentUser?.displayName }}</p>
             </div>
         </div>
-        <nav>
+        <nav v-if="role === 'admin'">
             <ul class="space-y-1">
                 <li>
                     <router-link :to="{ name: 'dashboard' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-200">
@@ -38,6 +38,27 @@
                         <span class="text-lg">Services</span>
                     </router-link>
                 </li>
+                <li>
+                    <div class="flex items-center gap-x-3 w-full p-2 rounded-md cursor-pointer hover:bg-gray-200" @click="openMenu('Reservations')">
+                        <Icon icon="mdi:user-group-outline" class="text-2xl" />
+                        <span class="text-lg">Reservations</span>
+                        <Icon icon="weui:arrow-filled" class="text-2xl ml-auto rotate-90 duration-150" :class="{ 'rotate-180': openedMenu.includes('Reservations') }" />
+                    </div>
+                    <div v-if="openedMenu.includes('Reservations')" class="ml-5 pl-2 border-l space-y-1">
+                        <router-link :to="{ name: 'pendingReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
+                            <span class="text-lg">Pending</span>
+                        </router-link>
+                        <router-link :to="{ name: 'completedReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
+                            <span class="text-lg">Completed</span>
+                        </router-link>
+                        <router-link :to="{ name: 'rejectedReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
+                            <span class="text-lg">Rejected</span>
+                        </router-link>
+                        <router-link :to="{ name: 'canceledReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
+                            <span class="text-lg">Canceled</span>
+                        </router-link>
+                    </div>
+                </li>
             </ul>
         </nav>
     </div>
@@ -50,6 +71,7 @@ import { useAuthStore } from '../store'
 const authStore = useAuthStore()
 
 const currentUser = computed(() => authStore.currentUser)
+const role = computed(() => authStore.role)
 
 const openedMenu = ref([])
 

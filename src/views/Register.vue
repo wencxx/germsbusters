@@ -86,6 +86,7 @@ const registrationData = ref({
     password: '',
     confirmPassword: '',
     role: 'employee',
+    status: 'unavailable',
     expertise: []
 })
 

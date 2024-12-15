@@ -51,6 +51,51 @@ const routes = [
         }
     },
     {
+        path: '/pending-reservations',
+        name: 'pendingReservations',
+        component: () => import('../views/PendingReservations.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresRole: 'admin',
+        }
+    },
+    {
+        path: '/completed-reservations',
+        name: 'completedReservations',
+        component: () => import('../views/CompletedReservations.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresRole: 'admin',
+        }
+    },
+    {
+        path: '/rejected-reservations',
+        name: 'rejectedReservations',
+        component: () => import('../views/RejectedReservations.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresRole: 'admin',
+        }
+    },
+    {
+        path: '/rejected-reservations',
+        name: 'rejectedReservations',
+        component: () => import('../views/RejectedReservations.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresRole: 'admin',
+        }
+    },
+    {
+        path: '/canceled-reservations',
+        name: 'canceledReservations',
+        component: () => import('../views/CanceledReservations.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresRole: 'admin',
+        }
+    },
+    {
         path: '/not-authorized',
         name: 'notAuthorized',
         component: () => import('../views/Forbidded.vue'),
