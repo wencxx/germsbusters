@@ -107,11 +107,11 @@
 <script setup>
 import acceptReservation from '../components/acceptReservation.vue'
 import rejectReservationModal from '../components/rejectReservation.vue'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useDataStore } from '../store'
 import moment from 'moment'
 import { db } from '../config/firebaseConfig'
-import { doc, updateDoc } from 'firebase/firestore'
+import { doc, updateDoc, getDocs, collection, query, where } from 'firebase/firestore'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 
@@ -119,11 +119,37 @@ const $toast = useToast()
 
 const dataStore = useDataStore()
 
-const pendingReservations = computed(() => dataStore.pendingReservations)
-const fetching = computed(() => dataStore.fetching)
+onMounted(() => {
+    getPendingReservations()
+})
+
+const pendingReservations = ref([])
+const fetching = ref(false)
 
 const getServiceDetails = (serviceID) => {
     return dataStore.getServiceDetails(serviceID)
+}
+
+const getPendingReservations = async () => {
+    const q = query(
+        collection(db, 'reservations'),
+        where('status', '==', 'pending')
+    )
+    try {
+        fetching.value = true
+        const snapshots = await getDocs(q)
+
+        snapshots.docs.forEach(doc => {
+            pendingReservations.value.push({
+                id: doc.id,
+                ...doc.data()
+            })
+        })
+    } catch (error) {
+        console.log(error)
+    } finally {
+        fetching.value = false
+    }
 }
 
 // filtered employees

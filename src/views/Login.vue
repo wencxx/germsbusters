@@ -75,7 +75,7 @@ const signIn = async () => {
         if(snapshots.docs[0].data().role === 'admin'){
             router.push('/dashboard')
         }else if(snapshots.docs[0].data().role === 'employee'){
-            router.push('/dashboard')
+            router.push('/assigned-reservations')
         }else{
             err.value = 'Invalid Credentials'
         }

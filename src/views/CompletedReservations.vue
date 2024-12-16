@@ -19,8 +19,7 @@
                             <th class="py-2">Floor Area</th>
                             <th class="py-2">No. of Workers</th>
                             <th class="py-2">Total</th>
-                            <th class="py-2">MOP</th>
-                            <th class="py-2">Reference</th>
+                            <th class="py-2">Images</th>
                             <th class="py-2">Action</th>
                         </tr>
                     </thead>
@@ -34,8 +33,18 @@
                             <td class="py-2 capitalize">{{ reservation.floorArea }}</td>
                             <td class="py-2 capitalize">{{ reservation.noOfWorkers }}</td>
                             <td class="py-2 capitalize">{{ formatTotal(reservation.total) }}</td>
-                            <td class="py-2 capitalize">{{ reservation.paymentMethod }}</td>
-                            <td class="py-2 capitalize">{{ reservation.referenceNumber }}</td>
+                            <td class="py-2 capitalize">
+                                <div class="flex flex-col gap-2 text-white">
+                                    <button class="flex items-center pl-2 rounded gap-x-2 bg-green-500" @click="viewImageService(reservation.after)">
+                                        <Icon icon="mdi:image" />
+                                        <span>After</span>
+                                    </button>
+                                    <button class="flex items-center pl-2 rounded gap-x-2 bg-orange-500" @click="viewImageService(reservation.beforeImage)">
+                                        <Icon icon="mdi:image" />
+                                        <span>Before</span>
+                                    </button>
+                                </div>
+                            </td>
                             <td class="py-2">
                                 <div class="space-x-1">
                                     <button>
@@ -101,33 +110,65 @@
 
         <acceptReservation v-if="showAcceptModal" :reservationData="reservationData" @closeModal="showAcceptModal = false" @accepted="accepted" />
         <rejectReservationModal v-if="showRejectModal" :reservationIdToReject="reservationIdToReject" @closeModal="showRejectModal = false" @rejected="rejected"/>
+        <viewImage v-if="showViewModal" :imageToView="imageToView" @closeModal="showViewModal = false" />
     </div>
 </template>
 
 <script setup>
+import viewImage from '../components/viewImage.vue'
 import acceptReservation from '../components/acceptReservation.vue'
 import rejectReservationModal from '../components/rejectReservation.vue'
 import { computed, onMounted, ref } from 'vue'
 import { useDataStore } from '../store'
 import moment from 'moment'
 import { db } from '../config/firebaseConfig'
-import { doc, updateDoc } from 'firebase/firestore'
+import { doc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
+
+const showViewModal = ref(false)
+const imageToView = ref('')
+
+const viewImageService = (link) => {
+    imageToView.value = link
+    showViewModal.value = true
+} 
 
 const $toast = useToast()
 
 const dataStore = useDataStore()
 
 onMounted(() => {
-    dataStore.getCompletedReservations()
+    getCompletedReservations()
 })
 
-const completedReservations = computed(() => dataStore.completedReservations)
-const fetching = computed(() => dataStore.fetching)
+const completedReservations = ref([])
+const fetching = ref(false)
 
 const getServiceDetails = (serviceID) => {
     return dataStore.getServiceDetails(serviceID)
+}
+
+const getCompletedReservations = async () => {
+    const q = query(
+        collection(db, 'reservations'),
+        where('status', '==', 'completed')
+    )
+    try {
+        fetching.value = true
+        const snapshots = await getDocs(q)
+
+        snapshots.docs.forEach(doc => {
+            completedReservations.value.push({
+                id: doc.id,
+                ...doc.data()
+            })
+        })
+    } catch (error) {
+        console.log(error)
+    } finally {
+        fetching.value = false
+    }
 }
 
 // filtered employees
