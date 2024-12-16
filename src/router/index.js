@@ -114,7 +114,7 @@ const routes = [
         }
     },
     {
-        path: '/completed-reservations',
+        path: '/completed-assigned-reservations',
         name: 'completedAssignedReservations',
         component: () => import('../views/CompletedAssignedReservations.vue'),
         meta: {
