@@ -8,7 +8,7 @@
                 </div>
             </div>
             <div v-else-if="!fetching && reservations.length" class="grid lg:grid-cols-4 gap-5">
-                <div v-for="(reservation, index) in reservations" :key="reservation.id" class="bg-white p-3 rounded-md shadow h-fit">
+                <div v-for="reservation in reservations" :key="reservation.id" class="bg-white p-3 rounded-md shadow h-fit">
                     <h1 class="font-medium text-gray-700">{{ reservation.name }}</h1>
                     <h1 class="font-bold text-gray-800">Service:</h1>
                     <h1 class="font-medium text-gray-700">{{ getServiceDetails(reservation.serviceID).title }}</h1>
@@ -21,9 +21,9 @@
                         <span class="font-bold text-gray-800">Total</span>
                         <span>{{ formatTotal(reservation.total) }}</span>
                     </h1>
-                    <div class="flex justify-between mt-2">
+                    <!-- <div class="flex justify-between mt-2">
                         <button class="bg-green-500 px-3 rounded w-2/5 text-white" @click="completeReservation(reservation, index)">Complete</button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div v-else-if="!fetching && !reservations.length" class="text-gray-500">
