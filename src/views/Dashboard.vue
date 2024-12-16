@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center !p-10">
+  <div class="flex flex-col items-center !p-10 gap-y-10">
     <div class="w-full flex justify-center">
       <div class="grid grid-cols-4 w-full max-w-6xl h-fit gap-10">
         <div class="w-full h-32 bg-white shadow-sm rounded-lg border p-3 px-5 flex flex-col justify-around">
@@ -48,15 +48,22 @@
         </div>
       </div>
     </div>
+    <div class="w-full max-w-6xl p-5 bg-white rounded-md">
+         <Line :data="chartData" :options="chartOptions" class="!w-full !h-full" />
+    </div>
   </div>
 </template>
 
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useAuthStore } from '../store'
 import { db } from '../config/firebaseConfig'
 import { collection, getDocs, where, query, getCountFromServer, and } from 'firebase/firestore'
+import { Line } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
+
+ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
 
 const authStore = useAuthStore()
 const currentUser = computed(() => authStore.currentUser)
@@ -84,10 +91,37 @@ const getCompleted = async () => {
                 ...doc.data()
             })
         })
+
     } catch (error) {
         console.log(error)
     }
 }
+
+watch(completedServices.value, (newVal) => {
+    if(newVal){
+        getYearlyCount()
+    }
+})
+
+const getYearlyCount = () => {
+    const yearlyCount = {}
+
+    completedServices.value.forEach(service => {
+        const dateAccepted = service.dateAccepted.toDate() 
+        const year = dateAccepted.getFullYear()  
+
+        if (yearlyCount[year]) {
+            yearlyCount[year]++
+        } else {
+            yearlyCount[year] = 1
+        }
+    })
+
+    console.log(yearlyCount)
+
+    return yearlyCount
+}
+
 
 const getRevenueForMonth = (month) => {
     const totalRevenue = completedServices.value
@@ -177,5 +211,35 @@ const countServices = async () => {
         console.log(error)
     }
 }
+
+const chartData = computed(() => {
+    return {
+        labels: Object.keys(getYearlyCount()), 
+        datasets: [
+            {
+                label: 'Completed Reservations',
+                data: Object.values(getYearlyCount()), 
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1,
+            },
+        ],
+    };
+});
+
+
+const chartOptions = ref({
+  responsive: true,
+  plugins: {
+    title: {
+      display: true,
+      text: 'Yearly reservations',
+    },
+    legend: {
+      display: false, 
+    },
+  },
+});
+
 </script>
 
