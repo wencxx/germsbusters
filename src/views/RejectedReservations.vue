@@ -111,7 +111,7 @@ import { computed, ref, onMounted } from 'vue'
 import { useDataStore } from '../store'
 import moment from 'moment'
 import { db } from '../config/firebaseConfig'
-import { doc, updateDoc } from 'firebase/firestore'
+import { doc, updateDoc, getDocs, collection, query, where } from 'firebase/firestore'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 
@@ -120,14 +120,36 @@ const $toast = useToast()
 const dataStore = useDataStore()
 
 onMounted(() => {
-    dataStore.getRejectedReservations()
+    getRejectedReservations()
 })
 
-const rejectedReservations = computed(() => dataStore.rejectedReservations)
-const fetching = computed(() => dataStore.fetching)
+const rejectedReservations = ref([])
+const fetching = ref(false)
 
 const getServiceDetails = (serviceID) => {
     return dataStore.getServiceDetails(serviceID)
+}
+
+const getRejectedReservations = async () => {
+    const q = query(
+        collection(db, 'reservations'),
+        where('status', '==', 'rejected')
+    )
+    try {
+        fetching.value = true
+        const snapshots = await getDocs(q)
+
+        snapshots.docs.forEach(doc => {
+            rejectedReservations.value.push({
+                id: doc.id,
+                ...doc.data()
+            })
+        })
+    } catch (error) {
+        console.log(error)
+    } finally {
+        fetching.value = false
+    }
 }
 
 // filtered employees
