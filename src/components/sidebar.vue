@@ -6,7 +6,13 @@
             </div>
             <div>
                 <h1 class="text-gray-400 tracking-wide">Welcome,</h1>
-                <p class="text-sm font-semibold text-gray-700 -mt-1">{{ currentUser?.displayName }}</p>
+                <p class="text-sm font-semibold text-gray-700 -mt-1">{{ currentUser?.displayName || 'Employee' }}</p>
+            </div>
+            <div class="ml-auto">
+                <select class="border text-xs" v-model="status" @change="changeStatus">
+                    <option value="available">Available</option>
+                    <option value="unavailable">Unavailable</option>
+                </select>
             </div>
         </div>
         <nav v-if="role === 'admin'">
@@ -65,7 +71,7 @@
             </ul>
         </nav>
         <nav v-if="role === 'employee'">
-             <ul class="space-y-1">
+            <ul class="space-y-1">
                 <li>
                     <div class="flex items-center gap-x-3 w-full p-2 rounded-md cursor-pointer hover:bg-gray-200" @click="openMenu('Reservations')">
                         <Icon icon="mdi:user-group-outline" class="text-2xl" />
@@ -88,8 +94,10 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 import { useAuthStore } from '../store'
+import { db } from '../config/firebaseConfig'
+import { getDocs, where, query, updateDoc, doc, collection, limit } from 'firebase/firestore'
 
 const authStore = useAuthStore()
 
@@ -106,6 +114,60 @@ const openMenu = (menu) => {
         openedMenu.value.push(menu)
     }
 }
+
+watch(() => currentUser.value?.uid, (newVal) => {
+    if(newVal){
+        getUserData()
+    }
+})
+
+const userDetails = ref({})
+
+const getUserData = async () => {
+    try {
+        const q = query(
+            collection(db, 'users'),
+            where('userID', '==', currentUser.value?.uid),
+            limit(1)
+        )
+
+        const snapshot = await getDocs(q)
+
+        userDetails.value = {
+            id: snapshot.docs[0].id,
+            ...snapshot.docs[0].data()
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const status = ref('unavailable')
+
+watchEffect(() => {
+    status.value = userDetails.value.status
+})
+
+const changeStatus = async () => {
+    try {
+        const q = query(
+            collection(db, 'users'),
+            where('userID', '==', currentUser.value?.uid)
+        );
+
+        const querySnapshot = await getDocs(q); 
+
+        querySnapshot.forEach(async doc => {
+            const docRef = doc.ref; 
+            await updateDoc(docRef, {
+                status: status.value
+            });
+        });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 </script>
 
 <style scoped>
