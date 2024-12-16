@@ -6,7 +6,7 @@
                 <h1 class="text-lg text-gray-600 font-semibold">Assign Employee</h1>
                 <div v-if="employees.length" class="flex flex-wrap gap-x-3">
                     <div v-for="employee in employees" :key="employee.id" class="flex items-center gap-x-1">
-                        <input type="checkbox" class="w-5 aspect-square" @change="assignEmployee(employee.id)">
+                        <input type="checkbox" class="w-5 aspect-square" @change="assignEmployee(employee.userID)">
                         <label class="text-lg text-gray-600">{{ employee.fullName }}</label>
                     </div>
                 </div>

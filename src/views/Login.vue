@@ -5,6 +5,7 @@
             <h1 class="text-2xl font-medium">Welcome Back</h1>
             <div class="w-full space-y-3 mt-7">
                 <p v-if="$route.query.registered" class="bg-green-500 text-white pl-2 rounded py-1">Successfully Registered!</p>
+                <p v-if="err" class="bg-red-500 text-white pl-2 rounded py-1">{{ err }}</p>
                 <p v-if="notAccepted" class="bg-green-500 text-white pl-2 rounded py-1">Wait for the admin to accept your registration</p>
                 <div class="flex flex-col gap-y-1 w-full">
                     <label for="Username">Username</label>
@@ -46,6 +47,7 @@ const userRef = collection(db, 'users')
 
 const signingIn = ref(false)
 const notAccepted = ref(false)
+const err = ref('')
 
 const signIn = async () => {
     try {
@@ -72,11 +74,20 @@ const signIn = async () => {
 
         if(snapshots.docs[0].data().role === 'admin'){
             router.push('/dashboard')
+        }else if(snapshots.docs[0].data().role === 'employee'){
+            router.push('/dashboard')
+        }else{
+            err.value = 'Invalid Credentials'
         }
 
         authStore.login(user.accessToken, user, snapshots.docs[0].data().role)
     } catch (error) {
-        console.log(error)
+        console.log(error.code)
+        if(error.code === 'auth/invalid-credential'){
+            err.value = 'Invalid Credentials'
+        }else{
+            err.value = error.code
+        }
     } finally {
         signingIn.value = false
     }

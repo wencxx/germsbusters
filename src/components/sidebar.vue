@@ -61,6 +61,16 @@
                 </li>
             </ul>
         </nav>
+        <nav v-if="role === 'employee'">
+             <ul class="space-y-1">
+                <li>
+                    <router-link :to="{ name: 'assignedReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-200">
+                        <Icon icon="icon-park-outline:list" class="text-2xl" />
+                        <span class="text-lg">Assinged Reservations</span>
+                    </router-link>
+                </li>
+             </ul>
+        </nav>
     </div>
 </template>
 

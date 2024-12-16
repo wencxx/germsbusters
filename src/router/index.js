@@ -96,6 +96,15 @@ const routes = [
         }
     },
     {
+        path: '/assigned-reservations',
+        name: 'assignedReservations',
+        component: () => import('../views/AssignedReservations.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresRole: 'employee',
+        }
+    },
+    {
         path: '/not-authorized',
         name: 'notAuthorized',
         component: () => import('../views/Forbidded.vue'),
