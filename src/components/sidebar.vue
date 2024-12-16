@@ -48,6 +48,9 @@
                         <router-link :to="{ name: 'pendingReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
                             <span class="text-lg">Pending</span>
                         </router-link>
+                        <router-link :to="{ name: 'acceptedReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
+                            <span class="text-lg">Accepted</span>
+                        </router-link>
                         <router-link :to="{ name: 'completedReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
                             <span class="text-lg">Completed</span>
                         </router-link>
@@ -66,7 +69,7 @@
                 <li>
                     <router-link :to="{ name: 'assignedReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-200">
                         <Icon icon="icon-park-outline:list" class="text-2xl" />
-                        <span class="text-lg">Assinged Reservations</span>
+                        <span class="text-lg">Assigned Reservations</span>
                     </router-link>
                 </li>
              </ul>

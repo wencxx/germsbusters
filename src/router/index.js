@@ -60,6 +60,15 @@ const routes = [
         }
     },
     {
+        path: '/accepted-reservations',
+        name: 'acceptedReservations',
+        component: () => import('../views/AcceptedReservations.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresRole: 'admin',
+        }
+    },
+    {
         path: '/completed-reservations',
         name: 'completedReservations',
         component: () => import('../views/CompletedReservations.vue'),
