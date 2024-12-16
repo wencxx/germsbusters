@@ -20,7 +20,9 @@
                 <tbody v-if="!fetching && filteredServices.length">
                     <tr v-for="(service, index) in filteredServices" :key="index" class="border-y text-center text-gray-600" :class="{ 'animate-pulse bg-gray-100': deleting && indexToDelete === index }">
                         <td class="py-2 capitalize">{{ service.title }}</td>
-                        <td class="py-2">{{ service.description }}</td>
+                        <td class="py-2">
+                            <span class="line-clamp-3">{{ service.description }}</span>
+                        </td>
                         <td class="py-2">₱{{ service.rate }}</td>
                         <td class="py-2">
                             <div>
