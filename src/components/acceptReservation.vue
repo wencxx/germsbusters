@@ -67,7 +67,8 @@ const acceptReservation = async () => {
         accepting.value = true
         await updateDoc(docRef, {
             assignedEmployees: assignedEmployee.value,
-            status: 'accepted'
+            status: 'accepted',
+            dateAccepted: new Date()
         })
         emit('accepted')
         $toast.success('Accepted reservation successfully')
