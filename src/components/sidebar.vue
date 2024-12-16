@@ -67,10 +67,20 @@
         <nav v-if="role === 'employee'">
              <ul class="space-y-1">
                 <li>
-                    <router-link :to="{ name: 'assignedReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-200">
-                        <Icon icon="icon-park-outline:list" class="text-2xl" />
+                    <div class="flex items-center gap-x-3 w-full p-2 rounded-md cursor-pointer hover:bg-gray-200" @click="openMenu('Reservations')">
+                        <Icon icon="mdi:user-group-outline" class="text-2xl" />
                         <span class="text-lg">Assigned Reservations</span>
-                    </router-link>
+                        <Icon icon="weui:arrow-filled" class="text-2xl ml-auto rotate-90 duration-150" :class="{ 'rotate-180': openedMenu.includes('Reservations') }" />
+                    </div>
+                    <div v-if="openedMenu.includes('Reservations')" class="ml-5 pl-2 border-l space-y-1">
+                        <router-link :to="{ name: 'assignedReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
+                            <span class="text-lg">Pending</span>
+                        </router-link>
+                        <router-link :to="{ name: 'completedAssignedReservations' }" class="flex items-center gap-x-3 w-full p-2 rounded-md hover:bg-gray-100">
+                            <span class="text-lg">Completed</span>
+                        </router-link>
+                        
+                    </div>
                 </li>
              </ul>
         </nav>

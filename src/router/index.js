@@ -114,6 +114,15 @@ const routes = [
         }
     },
     {
+        path: '/completed-reservations',
+        name: 'completedAssignedReservations',
+        component: () => import('../views/CompletedAssignedReservations.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresRole: 'employee',
+        }
+    },
+    {
         path: '/not-authorized',
         name: 'notAuthorized',
         component: () => import('../views/Forbidded.vue'),

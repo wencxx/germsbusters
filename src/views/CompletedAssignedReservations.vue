@@ -76,7 +76,7 @@ const getAssignedReservations = async () => {
             collection(db, 'reservations'),
             and(
                 where('assignedEmployees', 'array-contains', currentUser.value?.uid),
-                where('status', '==', 'accepted')
+                where('status', '==', 'completed')
             )
         )
 
