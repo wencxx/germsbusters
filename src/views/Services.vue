@@ -14,6 +14,7 @@
                         <th class="py-2 w-1/5">Title</th>
                         <th class="py-2 w-2/5">Description</th>
                         <th class="py-2 w-1/5">Rate   (per sqm)</th>
+                        <th class="py-2 w-1/5">Rating</th>
                         <th class="py-2 w-1/5">Action</th>
                     </tr>
                 </thead>
@@ -24,6 +25,7 @@
                             <span class="line-clamp-3">{{ service.description }}</span>
                         </td>
                         <td class="py-2">₱{{ service.rate }}</td>
+                        <td class="py-2">{{ calculateRating(service?.ratings) }}</td>
                         <td class="py-2">
                             <div>
                                 <button>
@@ -174,4 +176,14 @@ const confirmedDelete = async () => {
         deleting.value = false
     }
 }
+
+
+const calculateRating = (rating) => {
+    if (!Array.isArray(rating)) {
+        console.warn("Expected an array but received:", rating);
+        return 0;
+    }
+    return rating.reduce((acc, next) => acc + (next.rating || 0), 0);
+};
+
 </script>
