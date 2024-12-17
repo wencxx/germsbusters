@@ -25,7 +25,7 @@
 import { computed, ref } from 'vue'
 import { useDataStore } from '../store'
 import { db } from '../config/firebaseConfig'
-import { doc, updateDoc } from 'firebase/firestore'
+import { doc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 
@@ -70,11 +70,28 @@ const acceptReservation = async () => {
             status: 'accepted',
             dateAccepted: new Date()
         })
+
+        for(const employee of assignedEmployee.value){
+            const q = query(
+                collection(db, 'users'),
+                where('userID', '==', employee)
+            )
+
+            const snapshots = await getDocs(q)
+            
+            for(const docs of snapshots.docs){
+                const docRef = doc(db, 'users', docs.id)
+                await updateDoc(docRef, {
+                    status: 'unavailable',
+                })
+            }
+        }
+
         emit('accepted')
         $toast.success('Accepted reservation successfully')
     } catch (error) {
         console.log(error)
-        $toast('Failed accepting reservation')
+        $toast.error('Failed accepting reservation')
     } finally {
         accepting.value = false
     }
