@@ -8,7 +8,7 @@
                 <h1 class="text-gray-400 tracking-wide">Welcome,</h1>
                 <p class="text-sm font-semibold text-gray-700 -mt-1">{{ currentUser?.displayName || 'Employee' }}</p>
             </div>
-            <div class="ml-auto">
+            <div v-if="role === 'employee'" class="ml-auto">
                 <select class="border text-xs" v-model="status" @change="changeStatus">
                     <option value="available">Available</option>
                     <option value="unavailable">Unavailable</option>
